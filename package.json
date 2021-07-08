@@ -1,0 +1,50 @@
+{
+  "name": "node-mysql78",
+  "version": "1.0.0",
+  "description": "node-mysql78",
+  "main": "dist/index.js",
+  "types": "src/index.ts",
+  "author": {
+    "name": "Frieda.Hu<657225485@qq.com>"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/www778878net/node-mysql78.git"
+  },
+  "bugs": {
+    "url": "https://github.com/www778878net/node-mysql78/issues"
+  },
+  "homepage": "https://github.com/www778878net/node-mysql78#readme",
+  "license": "Apache-2.0",
+  "files": [
+    "src",
+    "dist"
+  ],
+  "keywords": [
+    "typescript",
+    "mysql",
+    "nodejs"
+  ],
+  "scripts": {
+    "postpublish": "git push origin --all && git push origin --tags",
+    "postversion": "npm publish",
+    "preversion": "npm test",
+    "test": "mocha --reporter spec",
+    "build": "tsc"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "bundledDependencies": false,
+  "devDependencies": {
+    "@types/node": "^14.17.3",
+    "chai": "^4.3.4",
+    "mocha": "^9.0.2",
+    "typescript": "^3.0.3"
+  },
+  "dependencies": {
+    "md5": "^2.3.0",
+    "mysql": "^2.18.1",
+    "node-upinfo": "^2.0.1"
+  }
+}
