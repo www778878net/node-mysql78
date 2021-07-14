@@ -21,10 +21,23 @@ function loadjson(filepath) {
 }
 let mysql78 = new Mysql(config["mysql"]);
  
-describe('ts-hi function test', () => {
-    it('should return 3', () => {
-        const result = 3;// add(1, 1);
-        expect(result).to.equal(3);
+describe('test doT ', () => {
+    it(' return ok', () => {
+        let up = new UpInfo().getGuest();//Simulated user upload
+        let cmds = ["update test set data=? where idpk=?"
+            , "update test set item=? where idpk=?"
+        ]
+        let values = [[up.getNewid(), "1"]
+            , [up.getNewid(), "2"]]
+        let errtexts = ["If the first command goes wrong, what do we want to see."
+            , "What do we want to see if the second command fails."]
+        let logtext = "What do we want to write in the past journal. Just like a normal call's  cmdText.  "
+        let logvalues = ["Just like a normal call's  val1", "Just like a normal call's  val2"]
+
+        return mysql78.doT(cmds, values, errtexts, logtext, logvalues, up).then(function (result) {
+            expect(result).to.equal("ok");
+        })
+        
         //done(); // Í¨ÖªMocha²âÊÔ½áÊø
     });
 });

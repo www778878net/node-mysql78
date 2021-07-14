@@ -42,7 +42,7 @@ npm i node-mysql78
 
 ```
 
->## 使用 use  you can see ./test/test.js
+>## 使用 use   for testing, you can see ./test/test.js.
 >>### 初始化 init
 ```
 import Mysql from "node-mysql78";
@@ -90,6 +90,29 @@ let up = new UpInfo().getGuest();//Simulated user upload
    
 let sb = "update test set data=? where idpk=?"
 let tmp=await mysql78.doM(sb, [up.mid,1], up)
+```
+
+>>### The SQL transaction
+```
+let up = new UpInfo().getGuest();//Simulated user upload
+let cmds = ["update test set data=? where idpk=?"
+    , "update test set item=? where idpk=?"
+]
+let values = [[up.getNewid(), "1"]
+    , [up.getNewid(), "2"]]
+let errtexts = ["If the first command goes wrong, what do we want to see."
+    , "What do we want to see if the second command fails."]
+let logtext = "What do we want to write in the past journal. Just like a normal call's  cmdText.  "
+let logvalues = ["Just like a normal call's  val1", "Just like a normal call's  val2"]
+
+let tmp=await mysql78.doT(cmds, values, errtexts, logtext, logvalues, up)
+//tmp="ok" or errtext
+```
+
+>>### create system table
+```
+let up = new UpInfo().getGuest();//Simulated user upload
+mysql78.creatTb(up ) 
 ```
 
 ***
