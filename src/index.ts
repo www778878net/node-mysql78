@@ -14,7 +14,8 @@ export default class Mysql78 {
      * 
      */ 
     constructor(config: any) {
-        this._host = config["host"];
+        
+        this._host = config["host"] || "127.0.0.1"; 
         let port:number = config.port || 3306;
         let max: number = config.max || 200;
         let user: string = config.user || "root";
@@ -32,6 +33,23 @@ export default class Mysql78 {
             , 'connectTimeout': 30 * 1000
         });
     }
+    /**
+     * 创建系统常用表
+     * Create system common table
+     * 
+     * */
+      creatTb(up: UpInfo): Promise<any> {
+        let self = this;
+        return new Promise(function (resolve, reject) {
+            //sys_warn  :Save system debugging information
+            let cmdtext = "CREATE TABLE IF NOT EXISTS `sys_warn` (  `uid` varchar(36) NOT NULL DEFAULT '',  `kind` varchar(100) NOT NULL DEFAULT '',  `apisys` varchar(100) NOT NULL DEFAULT '',  `apiobj` varchar(100) NOT NULL DEFAULT '',  `content` text NOT NULL,  `upid` varchar(36) NOT NULL DEFAULT '',  `upby` varchar(50) DEFAULT '',  `uptime` datetime NOT NULL,  `idpk` int(11) NOT NULL AUTO_INCREMENT,  `id` varchar(36) NOT NULL,  `remark` varchar(200) NOT NULL DEFAULT '',  `remark2` varchar(200) NOT NULL DEFAULT '',  `remark3` varchar(200) NOT NULL DEFAULT '',  `remark4` varchar(200) NOT NULL DEFAULT '',  `remark5` varchar(200) NOT NULL DEFAULT '',  `remark6` varchar(200) NOT NULL DEFAULT '',  PRIMARY KEY (`idpk`)) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;";
+            self.doM(cmdtext, [], up)
+            //sys_sql: Save SQL statistics
+            cmdtext = "CREATE TABLE IF NOT EXISTS `sys_sql` (  `cid` varchar(36) NOT NULL DEFAULT '',  `apiv` varchar(50) NOT NULL DEFAULT '',  `apisys` varchar(50) NOT NULL DEFAULT '',  `apiobj` varchar(50) NOT NULL DEFAULT '',  `cmdtext` varchar(200) NOT NULL,  `uname` varchar(50) NOT NULL DEFAULT '',  `num` int(11) NOT NULL DEFAULT '0',  `dlong` int(32) NOT NULL DEFAULT '0',  `downlen` int(32) NOT NULL DEFAULT '0',  `upby` varchar(50) NOT NULL DEFAULT '',  `cmdtextmd5` varchar(50) NOT NULL DEFAULT '',  `uptime` datetime NOT NULL,  `idpk` int(11) NOT NULL AUTO_INCREMENT,  `id` varchar(36) NOT NULL,  `remark` varchar(200) NOT NULL DEFAULT '',  `remark2` varchar(200) NOT NULL DEFAULT '',  `remark3` varchar(200) NOT NULL DEFAULT '',  `remark4` varchar(200) NOT NULL DEFAULT '',  `remark5` varchar(200) NOT NULL DEFAULT '',  `remark6` varchar(200) NOT NULL DEFAULT '',  PRIMARY KEY (`idpk`),  UNIQUE KEY `u_v_sys_obj_cmdtext` (`apiv`,`apisys`,`apiobj`,`cmdtext`) USING BTREE) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;";
+            self.doM(cmdtext, [], up)
+            
+        });
+    }
 
     /**
      * sql get方法
@@ -41,7 +59,8 @@ export default class Mysql78 {
      */
     doGet(cmdtext: string, values: string[], up: UpInfo): Promise<any> {
         values = values || [];
-        let debug = up.debug || false;
+    
+        let debug = (up&&up.debug) || false;
         let self = this;
 
         return new Promise(function (resolve, reject) {
@@ -52,7 +71,7 @@ export default class Mysql78 {
                     reject(err);
                     return;
                 }
-                //console.log(cmdtext)
+               
                 client.query(cmdtext, values, function (err, back) {
                     if (debug) {
                         //console.log(cmdtext + " v:" + values.join(",") + " r:" + Util.inspect(back));
@@ -96,7 +115,7 @@ export default class Mysql78 {
      */
     doT(cmds: string[], values: string[][], errtexts: string[]
         , logtext: string, logvalue: string[], up: UpInfo): Promise<any> { 
-        let debug = up.debug || false; 
+        let debug = (up&&up.debug) || false; 
         let self = this;
         return new Promise((resolve, reject) => {
             this._pool.getConnection((err, con) => {
@@ -115,7 +134,7 @@ export default class Mysql78 {
                     }
                     Promise.all(promises).then((back: any[]) => { 
                         self._saveLog(logtext, logvalue, new Date().getTime() - dstart.getTime(), 1, up);
-                        var errmsg = "操作失败!";
+                        var errmsg = "err!";
                         var haveAff0 = false;
                         for (var i = 0; i < back.length; i++) {
                             if (back[i].affectedRows === 0) {
@@ -133,7 +152,7 @@ export default class Mysql78 {
                         }
                         con.commit();
                         con.release();
-                        resolve("操作成功");
+                        resolve("ok");
                     }).catch(function (err) {
                         //console.log(err);
                         resolve(err);
@@ -152,7 +171,7 @@ export default class Mysql78 {
      */
     doM(cmdtext: string, values: string[], up: UpInfo): Promise<string | number> {
         const self = this;
-        let debug: boolean = up.debug || false;
+        let debug: boolean =(up&& up.debug) || false;
 
         return new Promise(function (resolve, reject) {
             let dstart = new Date();
@@ -165,6 +184,7 @@ export default class Mysql78 {
                     //client.release();//.end()
                     self._pool.releaseConnection(client);
                     if (err) {
+           
                         //console.error(new Date() + 'mysql doM Error: ' + cmdtext + Util.inspect(err) + Util.inspect(values));
                         self._addWarn(Util.inspect(err) + " c:" + cmdtext + " v" + values.join(","), "err" + up.apisys, up);
 
@@ -195,7 +215,7 @@ export default class Mysql78 {
      */
     doMAdd(cmdtext: string, values: string[], up: UpInfo): Promise<string | number> {
         const self = this;
-        let debug: boolean = up.debug || false;
+        let debug: boolean = (up&&up.debug) || false;
 
         return new Promise(function (resolve, reject) {
             let dstart = new Date();
@@ -208,7 +228,9 @@ export default class Mysql78 {
                     //client.release();//.end()
                     self._pool.releaseConnection(client);
                     if (err) {
-                        //console.error(new Date() + 'mysql doM Error: ' + cmdtext + Util.inspect(err) + Util.inspect(values));
+                       
+                  
+                         console.error(new Date().format() + 'mysql doMAdd Error: ' + cmdtext + Util.inspect(err) + Util.inspect(values));
                         self._addWarn(Util.inspect(err) + " c:" + cmdtext + " v" + values.join(","), "err" + up.apisys, up);
 
                         resolve(0);
@@ -241,7 +263,7 @@ export default class Mysql78 {
      * @param up
      */
     doTran(cmdtext: string, values: string[], con: any, up: UpInfo): Promise<any> {
-        let debug = up.debug || false;
+        let debug = (up&&up.debug) || false;
         return new Promise(function (resolve, reject) {
             con.query(cmdtext, values, function (err, result) {
                 if (debug) {
