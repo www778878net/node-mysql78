@@ -20,7 +20,32 @@ function loadjson(filepath) {
     return data;
 }
 let mysql78 = new Mysql(config["mysql"]);
- 
+
+describe('test addwarn ', () => {
+    it(' return 1', () => {
+        let up = new UpInfo().getGuest();//Simulated user upload
+        mysql78.isLog = true;
+        return mysql78._addWarn("info info ", "kind", up).then(function (result) {
+         
+                expect(result).to.equal(1);
+         
+        })
+        //done(); // 通知Mocha测试结束
+    });
+});
+
+describe('test get and release con ', () => {
+    it(' return ok', () => {
+        return mysql78.getConnection().then(function (con) {    
+            expect(con.config.database).to.equal("mysql");
+            mysql78.releaseConnection(con).then(function (result) {
+                expect(result).to.equal("ok");
+            })
+        })
+        //done(); // 通知Mocha测试结束
+    });
+});
+
 describe('test doT ', () => {
     it(' return ok', () => {
         let up = new UpInfo().getGuest();//Simulated user upload

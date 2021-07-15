@@ -115,6 +115,21 @@ let up = new UpInfo().getGuest();//Simulated user upload
 mysql78.creatTb(up ) 
 ```
 
+>>### Get a MySQL connection and do whatever you want and release the connection.
+```
+let con=await mysql78.getConnection( ) ;
+//do something
+await mysql78.releaseConnection(con);
+```
+
+>>### Adding log information
+```
+ let up = new UpInfo().getGuest();//Simulated user upload
+mysql78.isLog = true;
+let back=await mysql78._addWarn("info info ", "kind", up) ;
+//We can query the log by kind or apisys or apiobj or upid or upby...
+```
+
 ***
 >## 框架简要说明
 >![后端服务](https://github.com/www778878net/node-date78/blob/main/assets/pic/services.jpeg)
