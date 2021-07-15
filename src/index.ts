@@ -4,12 +4,12 @@ const mysql = require('mysql');
 import md5 = require("md5");
 import { promises } from "fs";
 export default class Mysql78 {
-    _pool: any;//连接池
-    _host: string;//服务器地址
-    isLog: boolean;//是否追踪调用记录(默认写入sys_warn表 会影响性能)
-    isCount: boolean;//是否调用计数(默认写入sys_sql表 会影响性能)
+    _pool: any;//pool
+    _host: string;// 
+    isLog: boolean;//Whether to trace invocation records (default writing to the sys_warn table affects performance)
+    isCount: boolean;//Whether or not to call count (default writing to SYS SQL table affects performance)
     /*
-     * 最小示例
+     * small
      *let  config={host:"127.0.0.1",password:"test",database:"testdb"}
      * 
      */ 
@@ -52,10 +52,10 @@ export default class Mysql78 {
     }
 
     /**
-     * sql get方法
-     * @param cmdtext sql语句
-     * @param values 参数
-     * @param up 用户上传的数据(主要用于日志)
+     * sql get 
+     * @param cmdtext sql  
+     * @param values  
+     * @param up user upload
      */
     doGet(cmdtext: string, values: string[], up: UpInfo): Promise<any> {
         values = values || [];
@@ -91,7 +91,7 @@ export default class Mysql78 {
                         if (!back) {
                             back = [];
                         }  
-                        //这里为了去除多的一个东西
+                        //remove something
                         var str = JSON.stringify(back);
                         let lendown = str.length;
                         back = JSON.parse(str);
@@ -105,13 +105,13 @@ export default class Mysql78 {
     };
 
     /**
-     * 事务返回操作成功 或失败信息
-     * @param cmds 多个命令行
-     * @param values 多个参数
-     * @param errtexts 多个出错提示
-     * @param logtext log用
-     * @param logvalue log用
-     * @param up 用户上传
+     * The transaction returns information about the success or failure of the operation
+     * @param cmds more sql
+     * @param values more value
+     * @param errtexts more err
+     * @param logtext log
+     * @param logvalue log
+     * @param up user upload
      */
     doT(cmds: string[], values: string[][], errtexts: string[]
         , logtext: string, logvalue: string[], up: UpInfo): Promise<any> { 
@@ -164,10 +164,10 @@ export default class Mysql78 {
     }
 
     /**
-     * sql update方法 返回受影响行数
-     * @param cmdtext sql语句
-     * @param values 参数
-     * @param up 用户上传数据
+     * sql update Method returns the number of affected rows
+     * @param cmdtext sql 
+     * @param values  
+     * @param up user upload
      */
     doM(cmdtext: string, values: string[], up: UpInfo): Promise<string | number> {
         const self = this;
@@ -191,7 +191,7 @@ export default class Mysql78 {
                         resolve(0);
                     }
                     else {
-                       //这里为了去除多的一个东西
+                       //remove something
                         let str = JSON.stringify(results);
                         let lendown = str.length;
                         results = JSON.parse(str);
@@ -208,7 +208,7 @@ export default class Mysql78 {
     }
 
     /**
-     * 插入一行 返回插入的行号   
+     * Inserting a row returns the inserted row number
      * @param cmdtext
      * @param values
      * @param up
@@ -236,7 +236,7 @@ export default class Mysql78 {
                         resolve(0);
                     }
                     else {
-                        //这里为了去除多的一个 
+                        //remove something 
                         let str = JSON.stringify(results);
                         let lendown = str.length;
                         results = JSON.parse(str);
@@ -254,9 +254,9 @@ export default class Mysql78 {
 
  
     /**
-     * 事务封装 一条条执行(一般不用 doT更好 )
-     * 需要自己释放连接
-     * 可能有复杂的场景需要用到 比如第一句执行成功 但是什么条件变更了 还是要回滚事务
+     * Transactions are executed piecemeal (it is usually better not to use doT)
+     * You need to release the connection yourself
+     * There may be complicated scenarios where the first sentence is successful but what condition has changed and you still need to roll back the transaction
      * @param cmdtext
      * @param values
      * @param con
@@ -283,8 +283,8 @@ export default class Mysql78 {
     };
 
     /**
-     * doget doM不需要手动释放
-     * getConnection等需要
+     * doget doM  does not need to be released manually
+     * getConnection 
      * */
     releaseConnection(client:any): Promise<any> {
         let self = this;
@@ -294,7 +294,7 @@ export default class Mysql78 {
         })
     }
     /**
-     * 获取连接(记得释放)
+     * Get the connection (remember to release it)
      * */
     getConnection(): Promise<any> {
         let self = this;
@@ -311,12 +311,12 @@ export default class Mysql78 {
      
 
     /**
-     * debug功能 追踪SQL调用 在线调试问题(可设置跟踪用户或表或目录或函数等)
-     * 打开会影响性能 建议主要跟踪开发人员和正在开发的目录 
-     * 表名sys_warn 建表语句在函数后
+     *Debug function to track online debugging problems with SQL calls (can be set to track users or tables or directories or functions, etc.)
+     *Opening affects performance Suggestions mainly track the developer and the directory under development
+     * The table name sys warn follows the function
      * @param info log
-     * @param kind 方便查询log
-     * @param up 用户上传数据
+     * @param kind select the log
+     * @param up user upload
      */
     _addWarn(info: string, kind: string, up: UpInfo): Promise<any> {
         let self = this;
@@ -342,7 +342,7 @@ export default class Mysql78 {
                     }
                     else {
                         try {
-                            //这里为了去除多的一个东西
+                            //remove something
                             let str = JSON.stringify(results); 
                             results = JSON.parse(str);
                             resolve(results.affectedRows);
@@ -380,12 +380,12 @@ export default class Mysql78 {
 
     
     /**
-     * 统计功能(表名sys_sql 建表语句在函数后 打开会影响性能)
-     * @param cmdtext SQL语句
-     * @param values 值
-     * @param dlong 计时
-     * @param lendown 下载字节
-     * @param up 用户上传数据
+     * If the table name SYS_SQL is opened after the function, it will affect performance
+     * @param cmdtext SQL 
+     * @param values  
+     * @param dlong Function Timing
+     * @param lendown down bytes
+     * @param up user upload
      */
     _saveLog(cmdtext: string, values: string[], dlong: number, lendown: number, up: UpInfo ): Promise<any> {
         let self = this;

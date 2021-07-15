@@ -5,7 +5,7 @@ const mysql = require('mysql');
 const md5 = require("md5");
 class Mysql78 {
     /*
-     * ��Сʾ��
+     * small
      *let  config={host:"127.0.0.1",password:"test",database:"testdb"}
      *
      */
@@ -44,10 +44,10 @@ class Mysql78 {
         });
     }
     /**
-     * sql get����
-     * @param cmdtext sql���
-     * @param values ����
-     * @param up �û��ϴ�������(��Ҫ������־)
+     * sql get
+     * @param cmdtext sql
+     * @param values
+     * @param up user upload
      */
     doGet(cmdtext, values, up) {
         values = values || [];
@@ -78,7 +78,7 @@ class Mysql78 {
                         if (!back) {
                             back = [];
                         }
-                        //����Ϊ��ȥ�����һ������
+                        //remove something
                         var str = JSON.stringify(back);
                         let lendown = str.length;
                         back = JSON.parse(str);
@@ -91,13 +91,13 @@ class Mysql78 {
     }
     ;
     /**
-     * ���񷵻ز����ɹ� ��ʧ����Ϣ
-     * @param cmds ���������
-     * @param values �������
-     * @param errtexts ���������ʾ
-     * @param logtext log��
-     * @param logvalue log��
-     * @param up �û��ϴ�
+     * The transaction returns information about the success or failure of the operation
+     * @param cmds more sql
+     * @param values more value
+     * @param errtexts more err
+     * @param logtext log
+     * @param logvalue log
+     * @param up user upload
      */
     doT(cmds, values, errtexts, logtext, logvalue, up) {
         let debug = (up && up.debug) || false;
@@ -148,10 +148,10 @@ class Mysql78 {
         });
     }
     /**
-     * sql update���� ������Ӱ������
-     * @param cmdtext sql���
-     * @param values ����
-     * @param up �û��ϴ�����
+     * sql update Method returns the number of affected rows
+     * @param cmdtext sql
+     * @param values
+     * @param up user upload
      */
     doM(cmdtext, values, up) {
         const self = this;
@@ -172,7 +172,7 @@ class Mysql78 {
                         resolve(0);
                     }
                     else {
-                        //����Ϊ��ȥ�����һ������
+                        //remove something
                         let str = JSON.stringify(results);
                         let lendown = str.length;
                         results = JSON.parse(str);
@@ -188,7 +188,7 @@ class Mysql78 {
         });
     }
     /**
-     * ����һ�� ���ز�����к�
+     * Inserting a row returns the inserted row number
      * @param cmdtext
      * @param values
      * @param up
@@ -212,7 +212,7 @@ class Mysql78 {
                         resolve(0);
                     }
                     else {
-                        //����Ϊ��ȥ�����һ�� 
+                        //remove something 
                         let str = JSON.stringify(results);
                         let lendown = str.length;
                         results = JSON.parse(str);
@@ -228,9 +228,9 @@ class Mysql78 {
         });
     }
     /**
-     * �����װ һ����ִ��(һ�㲻�� doT���� )
-     * ��Ҫ�Լ��ͷ�����
-     * �����и��ӵĳ�����Ҫ�õ� �����һ��ִ�гɹ� ����ʲô��������� ����Ҫ�ع�����
+     * Transactions are executed piecemeal (it is usually better not to use doT)
+     * You need to release the connection yourself
+     * There may be complicated scenarios where the first sentence is successful but what condition has changed and you still need to roll back the transaction
      * @param cmdtext
      * @param values
      * @param con
@@ -255,8 +255,8 @@ class Mysql78 {
     }
     ;
     /**
-     * doget doM����Ҫ�ֶ��ͷ�
-     * getConnection����Ҫ
+     * doget doM  does not need to be released manually
+     * getConnection
      * */
     releaseConnection(client) {
         let self = this;
@@ -266,7 +266,7 @@ class Mysql78 {
         });
     }
     /**
-     * ��ȡ����(�ǵ��ͷ�)
+     * Get the connection (remember to release it)
      * */
     getConnection() {
         let self = this;
@@ -281,12 +281,12 @@ class Mysql78 {
         });
     }
     /**
-     * debug���� ׷��SQL���� ���ߵ�������(�����ø����û������Ŀ¼������)
-     * �򿪻�Ӱ������ ������Ҫ���ٿ�����Ա�����ڿ�����Ŀ¼
-     * ����sys_warn ��������ں�����
+     *Debug function to track online debugging problems with SQL calls (can be set to track users or tables or directories or functions, etc.)
+     *Opening affects performance Suggestions mainly track the developer and the directory under development
+     * The table name sys warn follows the function
      * @param info log
-     * @param kind �����ѯlog
-     * @param up �û��ϴ�����
+     * @param kind select the log
+     * @param up user upload
      */
     _addWarn(info, kind, up) {
         let self = this;
@@ -311,7 +311,7 @@ class Mysql78 {
                     }
                     else {
                         try {
-                            //����Ϊ��ȥ�����һ������
+                            //remove something
                             let str = JSON.stringify(results);
                             results = JSON.parse(str);
                             resolve(results.affectedRows);
@@ -347,12 +347,12 @@ class Mysql78 {
          */
     }
     /**
-     * ͳ�ƹ���(����sys_sql ��������ں����� �򿪻�Ӱ������)
-     * @param cmdtext SQL���
-     * @param values ֵ
-     * @param dlong ��ʱ
-     * @param lendown �����ֽ�
-     * @param up �û��ϴ�����
+     * If the table name SYS_SQL is opened after the function, it will affect performance
+     * @param cmdtext SQL
+     * @param values
+     * @param dlong Function Timing
+     * @param lendown down bytes
+     * @param up user upload
      */
     _saveLog(cmdtext, values, dlong, lendown, up) {
         let self = this;
